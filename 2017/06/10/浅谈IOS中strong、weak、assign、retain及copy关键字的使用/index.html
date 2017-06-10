@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="objective-c," />
 
 
 
@@ -93,12 +93,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Windmill&#39;s Notes">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="Preface在Xcode4.1之前iOS内存管理只有MRC模式，即手动内存管理，此时创建的对象需要手动release&amp;amp;dealloc，在4.1之后出现了ARC模式，由系统来自动管理内存的使用。没有接触过MRC编程的同学可能就不了解assign、retain、copy这三个关键词，strong、weak这两个关键词是在ARC模式中提出的，相比而言，weak相当于老版本的assign（基本一">
+<meta name="keywords" content="objective-c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈IOS中strong、weak、assign、retain及copy关键字的使用">
+<meta property="og:url" content="http://yoursite.com/2017/06/10/浅谈IOS中strong、weak、assign、retain及copy关键字的使用/index.html">
 <meta property="og:site_name" content="Windmill&#39;s Notes">
+<meta property="og:description" content="Preface在Xcode4.1之前iOS内存管理只有MRC模式，即手动内存管理，此时创建的对象需要手动release&amp;amp;dealloc，在4.1之后出现了ARC模式，由系统来自动管理内存的使用。没有接触过MRC编程的同学可能就不了解assign、retain、copy这三个关键词，strong、weak这两个关键词是在ARC模式中提出的，相比而言，weak相当于老版本的assign（基本一">
+<meta property="og:updated_time" content="2017-06-10T09:13:28.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Windmill&#39;s Notes">
+<meta name="twitter:title" content="浅谈IOS中strong、weak、assign、retain及copy关键字的使用">
+<meta name="twitter:description" content="Preface在Xcode4.1之前iOS内存管理只有MRC模式，即手动内存管理，此时创建的对象需要手动release&amp;amp;dealloc，在4.1之后出现了ARC模式，由系统来自动管理内存的使用。没有接触过MRC编程的同学可能就不了解assign、retain、copy这三个关键词，strong、weak这两个关键词是在ARC模式中提出的，相比而言，weak相当于老版本的assign（基本一">
 
 
 
@@ -126,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/10/浅谈IOS中strong、weak、assign、retain及copy关键字的使用/"/>
 
 
 
 
 
-  <title>Windmill's Notes</title>
+  <title>浅谈IOS中strong、weak、assign、retain及copy关键字的使用 | Windmill's Notes</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -158,9 +163,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -243,9 +246,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -271,9 +274,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/10/浅谈IOS中strong、weak、assign、retain及copy关键字的使用/" itemprop="url">浅谈IOS中strong、weak、assign、retain及copy关键字的使用</a></h1>
+          <h1 class="post-title" itemprop="name headline">浅谈IOS中strong、weak、assign、retain及copy关键字的使用</h1>
         
 
         <div class="post-meta">
@@ -320,9 +321,7 @@
       
 
       
-        
-          
-            <h1 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h1><p>在Xcode4.1之前iOS内存管理只有MRC模式，即手动内存管理，此时创建的对象需要手动release&amp;dealloc，在4.1之后出现了ARC模式，由系统来自动管理内存的使用。没有接触过MRC编程的同学可能就不了解assign、retain、copy这三个关键词，strong、weak这两个关键词是在ARC模式中提出的，相比而言，weak相当于老版本的assign（基本一致），strong相当于retain（一致）。</p>
+        <h1 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h1><p>在Xcode4.1之前iOS内存管理只有MRC模式，即手动内存管理，此时创建的对象需要手动release&amp;dealloc，在4.1之后出现了ARC模式，由系统来自动管理内存的使用。没有接触过MRC编程的同学可能就不了解assign、retain、copy这三个关键词，strong、weak这两个关键词是在ARC模式中提出的，相比而言，weak相当于老版本的assign（基本一致），strong相当于retain（一致）。</p>
 <h1 id="MRC"><a href="#MRC" class="headerlink" title="MRC"></a>MRC</h1><h2 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h2><p>在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一个对象的引用计数器为0，则系统会自动调用这个对象的dealloc方法来销毁这个对象。</p>
 <p><strong>比较</strong></p>
 <table>
@@ -384,42 +383,56 @@
 <p>　　答案，强引用循环：A对象强引用了B对象，B对象也强引用了A。因为都是强引用，也就是无论是A是B都要在对方的引用断了后才能销毁，但要断了引用，就必须对方对象销毁。就会出现这种僵局，为了避免出现这种情况，就应该有一个对象“示弱”，使其为“弱引用”。</p>
 <p>　　比较常见的，视图中的父子视图之间的引用：父视图强引用子视图，子视图弱引用父视图。</p>
 <h3 id="总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。"><a href="#总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。" class="headerlink" title="总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。"></a>总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。</h3>
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/objective-c/" rel="tag"># objective-c</a>
+          
+        </div>
+      
+
+      
+      
+      
 
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -427,6 +440,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -446,8 +463,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -500,6 +526,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Preface"><span class="nav-number">1.</span> <span class="nav-text">Preface</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MRC"><span class="nav-number">2.</span> <span class="nav-text">MRC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引用计数"><span class="nav-number">2.1.</span> <span class="nav-text">引用计数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#assign"><span class="nav-number">2.1.1.</span> <span class="nav-text">assign</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#retain"><span class="nav-number">2.1.2.</span> <span class="nav-text">retain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy"><span class="nav-number">2.1.3.</span> <span class="nav-text">copy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深拷贝-mutableCopy-和浅拷贝-copy-："><span class="nav-number">2.2.</span> <span class="nav-text">深拷贝(mutableCopy)和浅拷贝(copy)：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#copy-vs-retain"><span class="nav-number">2.2.1.</span> <span class="nav-text">copy vs retain</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ARC"><span class="nav-number">3.</span> <span class="nav-text">ARC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#强引用和弱引用"><span class="nav-number">3.1.</span> <span class="nav-text">强引用和弱引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入理解："><span class="nav-number">3.2.</span> <span class="nav-text">深入理解：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#打个比方："><span class="nav-number">3.2.1.</span> <span class="nav-text">打个比方：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#避免“强引用循环“的僵局："><span class="nav-number">3.3.</span> <span class="nav-text">避免“强引用循环“的僵局：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。"><span class="nav-number">3.3.1.</span> <span class="nav-text">总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -620,10 +662,10 @@
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
