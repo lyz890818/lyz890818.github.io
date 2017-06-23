@@ -361,15 +361,19 @@
 <ol>
 <li>先将应用内容通过摘要算法，得到摘要</li>
 <li>再用私钥对摘要进行加密得到密文</li>
-<li>将源文本、密文、和私钥对应的公钥一并发布<br>验证流程：</li>
+<li>将源文本、密文、和私钥对应的公钥一并发布</li>
+</ol>
+<p>验证流程：</p>
+<ol>
 <li>查看公钥是否是私钥方的</li>
 <li>然后用公钥对密文进行解密得到摘要</li>
 <li>将APP用同样的摘要算法得到摘要，两个摘要进行比对，如果相等那么一切正常<br>以上过程只要有一步出问题就视为无效。</li>
 </ol>
 <hr>
 <h4 id="include与-import的区别、-import与-class-的区别"><a href="#include与-import的区别、-import与-class-的区别" class="headerlink" title="#include与#import的区别、#import与@class 的区别"></a>#include与#import的区别、#import与@class 的区别</h4><p>#include和#import 其效果相同,都是导入类中定义的行为(方法);  </p>
-<p>#import 不会引起交叉编译,确保头文件只会被导入一次；<br>@class 表明只定义了类的名称,而具体类的行为是未知的,一般用于.h 文件  </p>
-<h2 id="class比-import编译效率更高。此外-class和-import的主要区别在于解决引用死锁的问题。"><a href="#class比-import编译效率更高。此外-class和-import的主要区别在于解决引用死锁的问题。" class="headerlink" title="@class比#import编译效率更高。此外@class和#import的主要区别在于解决引用死锁的问题。  "></a>@class比#import编译效率更高。此外@class和#import的主要区别在于解决引用死锁的问题。  </h2><h4 id="请分别说明-public、-protected、-private的含义与作用"><a href="#请分别说明-public、-protected、-private的含义与作用" class="headerlink" title="请分别说明@public、@protected、@private的含义与作用"></a>请分别说明@public、@protected、@private的含义与作用</h4><p>@public:对象的实例变量的作用域在任意地方都可以被访问 ;<br>@protected:对象的实例变量作用域在本类和子类都可以被访问 ;<br>@private:实例变量的作用域只能在本类(自身)中访问 .  </p>
+<p>#import 不会引起交叉编译,确保头文件只会被导入一次；<br>@class 表明只定义了类的名称,而具体类的行为是未知的,一般用于.h 文件<br>@class比#import编译效率更高。此外@class和#import的主要区别在于解决引用死锁的问题。 </p>
+<hr>
+<h4 id="请分别说明-public、-protected、-private的含义与作用"><a href="#请分别说明-public、-protected、-private的含义与作用" class="headerlink" title="请分别说明@public、@protected、@private的含义与作用"></a>请分别说明@public、@protected、@private的含义与作用</h4><p>@public:对象的实例变量的作用域在任意地方都可以被访问 ;<br>@protected:对象的实例变量作用域在本类和子类都可以被访问 ;<br>@private:实例变量的作用域只能在本类(自身)中访问 .  </p>
 <hr>
 <h4 id="请解释self-super-init-方法"><a href="#请解释self-super-init-方法" class="headerlink" title="请解释self = [super init]方法"></a>请解释self = [super init]方法</h4><p>容错处理,当父类初始化失败,会返回一个nil,表示初始化失败。由于继承的关系,子类是需要拥有父类的实例和行为,因此,我们必须先初始化父类,然后再初始化子类  </p>
 <hr>
@@ -395,14 +399,21 @@
 <li>使用了 atomic 属性会严重影响性能 ；</li>
 </ol>
 <hr>
-<h4 id="如何为-Class-定义一个对外只读对内可读写的属性"><a href="#如何为-Class-定义一个对外只读对内可读写的属性" class="headerlink" title="如何为 Class 定义一个对外只读对内可读写的属性?"></a>如何为 Class 定义一个对外只读对内可读写的属性?</h4><h2 id="在头文件中将属性定义为readonly-在-m文件中将属性重新定义为readwrite"><a href="#在头文件中将属性定义为readonly-在-m文件中将属性重新定义为readwrite" class="headerlink" title="在头文件中将属性定义为readonly, 在.m文件中将属性重新定义为readwrite"></a>在头文件中将属性定义为readonly, 在.m文件中将属性重新定义为readwrite</h2><h4 id="为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？"><a href="#为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？" class="headerlink" title="为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？"></a>为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？</h4><p>所有的引用计数系统，都存在循环应用的问题。例如下面的引用关系：<br>• 对象a创建并引用到了对象b.<br>• 对象b创建并引用到了对象c.<br>• 对象c创建并引用到了对象b.这时候b和c的引用计数分别是2和1。  </p>
-<h2 id="gt-当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。这种情况，必须打断循环引用，通过其他规则来维护引用关系。我们常见的delegate往往是assign方式的属性而不是retain方式-的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController-对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a，-如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。"><a href="#gt-当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。这种情况，必须打断循环引用，通过其他规则来维护引用关系。我们常见的delegate往往是assign方式的属性而不是retain方式-的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController-对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a，-如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。" class="headerlink" title="&gt; 当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。这种情况，必须打断循环引用，通过其他规则来维护引用关系。我们常见的delegate往往是assign方式的属性而不是retain方式 的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController 对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a， 如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。"></a>&gt; 当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。这种情况，必须打断循环引用，通过其他规则来维护引用关系。我们常见的delegate往往是assign方式的属性而不是retain方式 的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController 对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a， 如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。</h2><h4 id="使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码"><a href="#使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码" class="headerlink" title="使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码"></a>使用block有什么好处？请使用<code>NSTimer</code>写出一个使用block显示（在<code>UILabel</code>上）秒表的代码</h4><p>代码紧凑，传值、回调都很方便，省去了写代理的很多代码。</p>
+<h4 id="如何为-Class-定义一个对外只读对内可读写的属性"><a href="#如何为-Class-定义一个对外只读对内可读写的属性" class="headerlink" title="如何为 Class 定义一个对外只读对内可读写的属性?"></a>如何为 Class 定义一个对外只读对内可读写的属性?</h4><p>在头文件中将属性定义为readonly, 在.m文件中将属性重新定义为readwrite</p>
+<hr>
+<h4 id="为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？"><a href="#为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？" class="headerlink" title="为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？"></a>为什么很多内置类如UITableViewController的delegate属性都是assign而不是retain的？</h4><p>所有的引用计数系统，都存在循环应用的问题。例如下面的引用关系：<br>• 对象a创建并引用到了对象b.<br>• 对象b创建并引用到了对象c.<br>• 对象c创建并引用到了对象b.这时候b和c的引用计数分别是2和1。  </p>
+<blockquote>
+<p>当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。这种情况，必须打断循环引用，通过其他规则来维护引用关系。我们常见的delegate往往是assign方式的属性而不是retain方式 的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController 对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a， 如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。</p>
+</blockquote>
+<hr>
+<h4 id="使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码"><a href="#使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码" class="headerlink" title="使用block有什么好处？请使用NSTimer写出一个使用block显示（在UILabel上）秒表的代码"></a>使用block有什么好处？请使用<code>NSTimer</code>写出一个使用block显示（在<code>UILabel</code>上）秒表的代码</h4><p>代码紧凑，传值、回调都很方便，省去了写代理的很多代码。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">NSTimer封装成的block，实现方法：</div><div class="line">NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES callback:^() &#123;</div><div class="line">weakSelf.secondsLabel.text = ...</div><div class="line">&#125;</div><div class="line">[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];</div></pre></td></tr></table></figure>
 <hr>
 <h4 id="block和代理的区别，哪个更好？"><a href="#block和代理的区别，哪个更好？" class="headerlink" title="block和代理的区别，哪个更好？"></a>block和代理的区别，哪个更好？</h4><blockquote>
-<p>代理回调更面向过程，block更面向结果。<br>如果需要在执行的不同步骤时被通知，你就要使用代理。<br>如果只需要请求的消息或者失败的详情，应该使用block。<br>block更适合与状态无关的操作，比如被告知某些结果.<br>block之间是不会相互影响的。<br>但是代理更像一个生产流水线，每个回调方法是生产线上的一个处理步骤，一个回调的变动可能会引起另一个回调的变动。要是一个对象有超过一个的不同事件，应该使用代理。  </p>
-<h2 id="一个对象只有一个代理，要是某个对象是个单例对象，就不能使用代理。要是一个对象调用方法需要返回一些额外的信息，就可能需要使用代理。"><a href="#一个对象只有一个代理，要是某个对象是个单例对象，就不能使用代理。要是一个对象调用方法需要返回一些额外的信息，就可能需要使用代理。" class="headerlink" title="一个对象只有一个代理，要是某个对象是个单例对象，就不能使用代理。要是一个对象调用方法需要返回一些额外的信息，就可能需要使用代理。"></a>一个对象只有一个代理，要是某个对象是个单例对象，就不能使用代理。要是一个对象调用方法需要返回一些额外的信息，就可能需要使用代理。</h2><h4 id="在block内如何修改block外部变量？"><a href="#在block内如何修改block外部变量？" class="headerlink" title="在block内如何修改block外部变量？"></a>在block内如何修改block外部变量？</h4><p>默认情况下，在block中访问的外部变量是复制过去的，即：写操作不对原变量生效。但是你可以加上__block来让其写操作生效，示例代码如下:</p>
+<p>代理回调更面向过程，block更面向结果。<br>如果需要在执行的不同步骤时被通知，你就要使用代理。<br>如果只需要请求的消息或者失败的详情，应该使用block。<br>block更适合与状态无关的操作，比如被告知某些结果.<br>block之间是不会相互影响的。<br>但是代理更像一个生产流水线，每个回调方法是生产线上的一个处理步骤，一个回调的变动可能会引起另一个回调的变动。要是一个对象有超过一个的不同事件，应该使用代理。<br>一个对象只有一个代理，要是某个对象是个单例对象，就不能使用代理。要是一个对象调用方法需要返回一些额外的信息，就可能需要使用代理。</p>
 </blockquote>
+<hr>
+<h4 id="在block内如何修改block外部变量？"><a href="#在block内如何修改block外部变量？" class="headerlink" title="在block内如何修改block外部变量？"></a>在block内如何修改block外部变量？</h4><p>默认情况下，在block中访问的外部变量是复制过去的，即：写操作不对原变量生效。但是你可以加上__block来让其写操作生效，示例代码如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">__block int a = 0;</div><div class="line">void  (^foo)(void) = ^&#123;</div><div class="line">a = 1;</div><div class="line">&#125;</div><div class="line">f00();</div></pre></td></tr></table></figure>
 <hr>
 <h4 id="类别和类扩展的区别"><a href="#类别和类扩展的区别" class="headerlink" title="类别和类扩展的区别"></a>类别和类扩展的区别</h4><p>category和extensions的不同在于后者可以添加属性。另外后者添加的方法是必须要实现的。</p>
